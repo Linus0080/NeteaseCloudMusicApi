@@ -109,7 +109,14 @@ fs.readdirSync(path.join(__dirname, 'module'))
               res.append('Set-Cookie', cookies)
             }
           }
-          res.status(answer.status).send(answer.body)
+          if (
+            decodeURIComponent(req.originalUrl).indexOf('redirect=true') != -1
+          ) {
+            res.append('Location', answer.body.data[0].url)
+            res.status(302).send()
+          } else {
+            res.status(answer.status).send(answer.body)
+          }
         })
         .catch((answer) => {
           console.log('[ERR]', decodeURIComponent(req.originalUrl), {
